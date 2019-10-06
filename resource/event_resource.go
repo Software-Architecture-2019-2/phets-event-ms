@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/Software-Architecture-2019-2/sa-event-ms/model"
@@ -17,6 +18,7 @@ var people []model.Event
 
 // GetEventEndpoint gets an event
 func GetEventEndpoint(w http.ResponseWriter, r *http.Request) {
+	log.Println(fmt.Sprintf("%s - %s", r.Method, r.URL))
 	params := mux.Vars(r)
 	eventID, _ := primitive.ObjectIDFromHex(params["id"])
 	event := service.GetEvent(eventID)
@@ -27,6 +29,7 @@ func GetEventEndpoint(w http.ResponseWriter, r *http.Request) {
 
 // GetAllEventsEndpoint gets all events
 func GetAllEventsEndpoint(w http.ResponseWriter, r *http.Request) {
+	log.Println(fmt.Sprintf("%s - %s", r.Method, r.URL))
 	events := service.GetAllEvents()
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(events)
@@ -34,6 +37,7 @@ func GetAllEventsEndpoint(w http.ResponseWriter, r *http.Request) {
 
 // CreateEventEndpoint creates an event
 func CreateEventEndpoint(w http.ResponseWriter, r *http.Request) {
+	log.Println(fmt.Sprintf("%s - %s", r.Method, r.URL))
 	var event model.Event
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -49,6 +53,7 @@ func CreateEventEndpoint(w http.ResponseWriter, r *http.Request) {
 
 // DeleteEventEndpoint deletes an event
 func DeleteEventEndpoint(w http.ResponseWriter, r *http.Request) {
+	log.Println(fmt.Sprintf("%s - %s", r.Method, r.URL))
 	eventID, _ := primitive.ObjectIDFromHex(mux.Vars(r)["id"])
 	deletedEvent := service.DeleteEvent(eventID)
 
@@ -58,6 +63,7 @@ func DeleteEventEndpoint(w http.ResponseWriter, r *http.Request) {
 
 // UpdateEventEndpoint updates an event
 func UpdateEventEndpoint(w http.ResponseWriter, r *http.Request) {
+	log.Println(fmt.Sprintf("%s - %s", r.Method, r.URL))
 	eventID, _ := primitive.ObjectIDFromHex(mux.Vars(r)["id"])
 	var event model.Event
 	_ = json.NewDecoder(r.Body).Decode(&event)

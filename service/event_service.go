@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 
+	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"github.com/Software-Architecture-2019-2/sa-event-ms/model"
 	"github.com/Software-Architecture-2019-2/sa-event-ms/mongo"
 
@@ -96,7 +98,9 @@ func UpdateEvent(event model.Event, eventID primitive.ObjectID) model.Event {
 	err := eventCollection.FindOneAndUpdate(
 		context.Background(),
 		filter,
-		update).Decode(&updatedEvent)
+		update,
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&updatedEvent)
 
 	if err != nil {
 		log.Fatal(err)
