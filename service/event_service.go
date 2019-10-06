@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/Software-Architecture-2019-2/sa-event-ms/model"
@@ -17,21 +16,20 @@ const eventCollectionName = "event"
 var eventCollection = mongo.Database().Collection(eventCollectionName)
 
 // InsertOneValue inserts one item from Event model
-func InsertOneValue(event model.Event) {
-	inserted, err := eventCollection.InsertOne(context.Background(), event)
+func InsertOneValue(event model.Event) model.Event {
+	event.ID = primitive.NewObjectID()
+	_, err := eventCollection.InsertOne(context.Background(), event)
 	if err != nil {
 		log.Fatal(err)
 	}
-	println(fmt.Sprintf("%v", inserted.InsertedID))
-	// return inserted.InsertedID
+
+	return event
 }
 
 // GetAllEvents returns all events from DB
 func GetAllEvents() []model.Event {
-	cursor, err := eventCollection.Find(context.Background(), bson.D{})
-	if err != nil {
-		log.Fatal(err)
-	}
+	cursor, _ := eventCollection.Find(context.Background(), bson.D{})
+
 	var events []model.Event
 	var event model.Event
 	// Get the next result from the cursor
@@ -52,13 +50,12 @@ func GetAllEvents() []model.Event {
 // GetEvent returns event from DB using event ID
 func GetEvent(eventID primitive.ObjectID) model.Event {
 	filter := bson.M{
-		"_id": eventID,
+		"_id": bson.M{
+			"$eq": eventID,
+		},
 	}
 	var event model.Event
-	err := eventCollection.FindOne(context.Background(), filter).Decode(&event)
-	if err != nil {
-		log.Fatal(err)
-	}
+	eventCollection.FindOne(context.Background(), filter).Decode(&event)
 	return event
 }
 
@@ -66,7 +63,9 @@ func GetEvent(eventID primitive.ObjectID) model.Event {
 func DeleteEvent(eventID primitive.ObjectID) model.Event {
 	var deletedEvent model.Event
 	filter := bson.M{
-		"_id": eventID,
+		"_id": bson.M{
+			"$eq": eventID,
+		},
 	}
 	err := eventCollection.FindOneAndDelete(
 		context.Background(),
@@ -80,7 +79,9 @@ func DeleteEvent(eventID primitive.ObjectID) model.Event {
 // UpdateEvent updates an existing event and returns the update event
 func UpdateEvent(event model.Event, eventID primitive.ObjectID) model.Event {
 	filter := bson.M{
-		"_id": eventID,
+		"_id": bson.M{
+			"$eq": eventID,
+		},
 	}
 	update := bson.M{
 		"$set": bson.M{

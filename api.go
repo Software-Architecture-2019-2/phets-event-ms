@@ -10,9 +10,9 @@ import (
 var Router = mux.NewRouter()
 
 func init() {
-	Router.HandleFunc("/people", resource.GetAllEventsEndpoint).Methods("GET")
-	Router.HandleFunc("/people/{id}", resource.GetEventEndpoint).Methods("GET")
-	Router.HandleFunc("/people", resource.CreateEventEndpoint).Methods("POST")
-	Router.HandleFunc("/people/{id}", resource.DeleteEventEndpoint).Methods("DELETE")
-	Router.HandleFunc("/people/{id}", resource.UpdateEventEndpoint).Methods("PUT")
+	Router.HandleFunc("/event", resource.GetAllEventsEndpoint).Methods("GET")
+	Router.HandleFunc("/event/{id}", resource.GetEventEndpoint).Methods("GET")
+	Router.HandleFunc("/event", resource.CreateEventEndpoint).Methods("POST")
+	Router.HandleFunc("/event/{id}", resource.DeleteEventEndpoint).Methods("DELETE")
+	Router.HandleFunc("/event/{id}", resource.UpdateEventEndpoint).Methods("PUT")
 }

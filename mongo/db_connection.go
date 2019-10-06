@@ -31,7 +31,7 @@ func connectoToDB() {
 
 	log.Println("Connecting to MongoDB " + dbURL)
 
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(dbURL))
 
 	if err != nil {
 		log.Fatal(err)

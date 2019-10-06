@@ -27,9 +27,9 @@ func GetEventEndpoint(w http.ResponseWriter, r *http.Request) {
 
 // GetAllEventsEndpoint gets all events
 func GetAllEventsEndpoint(w http.ResponseWriter, r *http.Request) {
-	event := service.GetAllEvents()
+	events := service.GetAllEvents()
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(event)
+	json.NewEncoder(w).Encode(events)
 }
 
 // CreateEventEndpoint creates an event
@@ -40,9 +40,11 @@ func CreateEventEndpoint(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Kindly enter data with the event title and description only in order to create")
 	}
 	json.Unmarshal(reqBody, &event)
-	service.InsertOneValue(event)
+
+	insertedEvent := service.InsertOneValue(event)
+
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(event)
+	json.NewEncoder(w).Encode(insertedEvent)
 }
 
 // DeleteEventEndpoint deletes an event

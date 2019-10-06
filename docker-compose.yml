@@ -1,0 +1,27 @@
+version: "2.1"
+services:
+  sa-event-ms:
+    container_name: sa-event-ms
+    build: .
+    ports:
+      - "4000:8000"
+    # depends_on:
+    #   sa-event-db:
+    #     condition: service_healthy
+    environment:
+      MONGO_HOST: sa-event-db
+      MONGO_PORT: 27018
+    healthcheck:
+      test: "curl -I sa-event-ms:4000/event --fail"
+      interval: 20s
+      retries: 10
+  sa-event-db:
+    container_name: sa-event-db
+    image: mongo
+    healthcheck:
+      test: echo 'db.stats().ok' | mongo sa-event-db:27018/test --quiet 1
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "27018:27017"
