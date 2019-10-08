@@ -1,12 +1,12 @@
 version: "2.1"
 services:
-  sa-event-ms:
-    container_name: sa-event-ms
+  phets-event-ms:
+    container_name: phets-event-ms
     build: .
     ports:
-      - "4000:8000"
+      - "4001:8000"
     depends_on:
-      sa-event-db:
+      phets-event-db:
         condition: service_healthy
     environment:
       MONGO_HOST: 172.17.0.1
@@ -15,8 +15,8 @@ services:
       test: "curl -G localhost:8000/event --fail"
       interval: 20s
       retries: 10
-  sa-event-db:
-    container_name: sa-event-db
+  phets-event-db:
+    container_name: phets-event-db
     image: mongo
     healthcheck:
       test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet

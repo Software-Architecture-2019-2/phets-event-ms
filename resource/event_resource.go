@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Software-Architecture-2019-2/sa-event-ms/model"
-	"github.com/Software-Architecture-2019-2/sa-event-ms/service"
+	"github.com/Software-Architecture-2019-2/phets-event-ms/model"
+	"github.com/Software-Architecture-2019-2/phets-event-ms/service"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,8 +19,8 @@ var people []model.Event
 // GetEventEndpoint gets an event
 func GetEventEndpoint(w http.ResponseWriter, r *http.Request) {
 	log.Println(fmt.Sprintf("%s - %s", r.Method, r.URL))
-	params := mux.Vars(r)
-	eventID, _ := primitive.ObjectIDFromHex(params["id"])
+	id := r.FormValue("id")
+	eventID, _ := primitive.ObjectIDFromHex(id)
 	event := service.GetEvent(eventID)
 
 	w.WriteHeader(http.StatusOK)

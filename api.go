@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Software-Architecture-2019-2/sa-event-ms/resource"
+	"github.com/Software-Architecture-2019-2/phets-event-ms/resource"
 
 	"github.com/gorilla/mux"
 )

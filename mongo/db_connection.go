@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/Software-Architecture-2019-2/sa-event-ms/util"
+	"github.com/Software-Architecture-2019-2/phets-event-ms/util"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

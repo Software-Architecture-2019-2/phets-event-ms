@@ -6,8 +6,8 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/Software-Architecture-2019-2/sa-event-ms/model"
-	"github.com/Software-Architecture-2019-2/sa-event-ms/mongo"
+	"github.com/Software-Architecture-2019-2/phets-event-ms/model"
+	"github.com/Software-Architecture-2019-2/phets-event-ms/mongo"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
