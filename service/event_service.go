@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
 
@@ -20,6 +21,8 @@ var eventCollection = mongo.Database().Collection(eventCollectionName)
 // InsertOneValue inserts one item from Event model
 func InsertOneValue(event model.Event) model.Event {
 	event.ID = primitive.NewObjectID()
+	event.CreatedAt = time.Now()
+
 	_, err := eventCollection.InsertOne(context.Background(), event)
 	if err != nil {
 		log.Fatal(err)
@@ -89,8 +92,9 @@ func UpdateEvent(event model.Event, eventID primitive.ObjectID) model.Event {
 		"$set": bson.M{
 			"subject":     event.Subject,
 			"description": event.Description,
-			"animal":      event.AnimalID,
+			"animal_id":   event.AnimalID,
 			"date":        event.Date,
+			"updated_at":  time.Now(),
 		},
 	}
 
