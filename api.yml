@@ -1,0 +1,194 @@
+#Test with: http://editor.swagger.io/
+
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Microservice for Events
+  description: Go + MongoDB
+  license:
+    name: Software Architecture, 2019-II
+host: localhost:4001
+basePath: /
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /event:
+    post:
+      summary: Creates a new event
+      operationId: createEvent
+      parameters:
+        - name: event
+          in: body
+          required: true
+          description: Event Object
+          schema:
+            $ref: '#/definitions/EventInput'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Event'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+    get:
+      summary: Returns all events
+      operationId: getAllEvents
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/EventsList'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+  /event/{id}:
+    get:
+      summary: Returns an event with the given id
+      operationId: getEventById
+      parameters:
+        - name: id
+          in: path
+          description: The id of the event to be returned
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Event'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    put:
+      summary: Updates an event with the given id
+      operationId: updateEvent
+      parameters:
+        - name: id
+          in: path
+          description: The id of the event to be updated
+          required: true
+          type: integer
+        - name: event
+          in: body
+          required: true
+          description: Event Object
+          schema:
+            $ref: '#/definitions/EventInput'
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Event'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '406':
+            description: Not Acceptable (Invalid Params)
+            schema:
+              $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+    delete:
+      summary: Deletes an event with the given id
+      operationId: deleteEvent
+      parameters:
+        - name: id
+          in: path
+          description: The id of the event to be deleted
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/Event'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorModel'
+        '500':
+          description: unexpected error
+          schema:
+            $ref: '#/definitions/ErrorModel'
+
+definitions:
+
+  # Event
+  Event:
+    type: object
+    properties:
+      id:
+        type: integer
+      subject:
+        type: string
+      description:
+        type: string
+      date:
+        type: string
+      animal_id:
+        type: string
+      created_at:
+        type: string
+      updated_at:
+        type: string
+
+  EventInput:
+    type: object
+    properties:
+      subject:
+        type: string
+      description:
+        type: string
+      date:
+        type: string
+      animal_id:
+        type: string
+
+  EventsList:
+    type: object
+    required:
+      - total
+      - list
+    properties:
+      total:
+        type: number
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/Event'
+
+# Errors
+  ErrorModel:
+    type: object
+    required:
+      - message
+      - code
+    properties:
+      message:
+        type: string
+      code:
+        type: number
+      description:
+        type: object

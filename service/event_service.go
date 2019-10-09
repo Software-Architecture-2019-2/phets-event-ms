@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,53 +18,55 @@ const eventCollectionName = "event"
 var eventCollection = mongo.Database().Collection(eventCollectionName)
 
 // InsertOneValue inserts one item from Event model
-func InsertOneValue(event model.Event) model.Event {
+func InsertOneValue(event model.Event) (model.Event, error) {
 	event.ID = primitive.NewObjectID()
 	event.CreatedAt = time.Now()
 
 	_, err := eventCollection.InsertOne(context.Background(), event)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	return event
+	return event, err
 }
 
 // GetAllEvents returns all events from DB
-func GetAllEvents() []model.Event {
+func GetAllEvents() (model.EventsList, error) {
 	cursor, _ := eventCollection.Find(context.Background(), bson.D{})
 
-	var events []model.Event
+	events := model.EventsList{
+		Total: 0,
+		List:  []model.Event{},
+	}
 	var event model.Event
+	var err error
 	// Get the next result from the cursor
 	for cursor.Next(context.Background()) {
-		err := cursor.Decode(&event)
+		err = cursor.Decode(&event)
 		if err != nil {
-			log.Fatal(err)
+			break
 		}
-		events = append(events, event)
+		events.Total++
+		events.List = append(events.List, event)
 	}
-	if err := cursor.Err(); err != nil {
-		log.Fatal(err)
+	if err = cursor.Err(); err != nil {
+		return events, err
 	}
 	cursor.Close(context.Background())
-	return events
+	return events, err
 }
 
 // GetEvent returns event from DB using event ID
-func GetEvent(eventID primitive.ObjectID) model.Event {
+func GetEvent(eventID primitive.ObjectID) (model.Event, error) {
 	filter := bson.M{
 		"_id": bson.M{
 			"$eq": eventID,
 		},
 	}
 	var event model.Event
-	eventCollection.FindOne(context.Background(), filter).Decode(&event)
-	return event
+	err := eventCollection.FindOne(context.Background(), filter).Decode(&event)
+	return event, err
 }
 
 // DeleteEvent deletes an existing event and returns the deleted event
-func DeleteEvent(eventID primitive.ObjectID) model.Event {
+func DeleteEvent(eventID primitive.ObjectID) (model.Event, error) {
 	var deletedEvent model.Event
 	filter := bson.M{
 		"_id": bson.M{
@@ -75,14 +76,11 @@ func DeleteEvent(eventID primitive.ObjectID) model.Event {
 	err := eventCollection.FindOneAndDelete(
 		context.Background(),
 		filter).Decode(&deletedEvent)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return deletedEvent
+	return deletedEvent, err
 }
 
 // UpdateEvent updates an existing event and returns the update event
-func UpdateEvent(event model.Event, eventID primitive.ObjectID) model.Event {
+func UpdateEvent(event model.Event, eventID primitive.ObjectID) (model.Event, error) {
 	filter := bson.M{
 		"_id": bson.M{
 			"$eq": eventID,
@@ -106,8 +104,5 @@ func UpdateEvent(event model.Event, eventID primitive.ObjectID) model.Event {
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
 	).Decode(&updatedEvent)
 
-	if err != nil {
-		log.Fatal(err)
-	}
-	return updatedEvent
+	return updatedEvent, err
 }
