@@ -2,7 +2,7 @@ version: "2.1"
 services:
   phets-event-ms:
     container_name: phets-event-ms
-    build: .
+    image: phetsunal/phets-event-ms
     ports:
       - "4001:8000"
     depends_on:
