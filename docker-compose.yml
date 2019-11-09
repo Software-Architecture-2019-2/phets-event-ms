@@ -2,13 +2,14 @@ version: "2.1"
 services:
   phets-event-ms:
     container_name: phets-event-ms
-    image: phetsunal/phets-event-ms
+    build: .
     ports:
-      - "4001:8000"
+      - "4001:4001"
     depends_on:
       phets-event-db:
         condition: service_healthy
     environment:
+      PORT: 4001
       MONGO_HOST: 172.17.0.1
       MONGO_PORT: 3001
     healthcheck:
@@ -18,6 +19,8 @@ services:
   phets-event-db:
     container_name: phets-event-db
     image: mongo
+    volumes:
+      - phets-event-db-volume:/data/db
     healthcheck:
       test: echo 'db.stats().ok' | mongo localhost:27017/test --quiet
       interval: 20s
@@ -25,3 +28,6 @@ services:
       retries: 3
     ports:
       - "3001:27017"
+
+volumes:
+  phets-event-db-volume:

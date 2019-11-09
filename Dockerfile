@@ -11,6 +11,6 @@ ADD . $SRC_DIR
 
 RUN cd $SRC_DIR; go build -o phets-event-ms; cp phets-event-ms /app/
 
-EXPOSE 8000
+EXPOSE 4001
 
 CMD ["./phets-event-ms"]

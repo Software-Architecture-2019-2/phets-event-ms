@@ -3,9 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
-	log.Println("Starting server on port 8000...")
-	log.Fatal(http.ListenAndServe(":8000", Router))
+	var port string = os.Getenv("PORT")
+	if port == "" {
+		port = "4001"
+	}
+	log.Printf("Starting server on port %s...", port)
+	log.Fatal(http.ListenAndServe(":"+port, Router))
 }
